@@ -1,87 +1,677 @@
-    <div class="min-h-screen bg-gray-50 p-8">
-      <div class="max-w-7xl mx-auto">
-        
-        <!-- Header -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div class="flex justify-between items-center">
-            <div>
-              <h1 class="text-3xl font-bold text-gray-800">
-                Bienvenido, {{ user()?.name }}!
-              </h1>
-              <p class="text-gray-600 mt-1">{{ user()?.email }}</p>
-            </div>
-            <button 
-              (click)="logout()"
-              class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors"
+<div class="min-h-screen bg-gray-50 flex">
+  <!-- Barra Lateral -->
+  <div
+    class="w-20 bg-white shadow-xl flex flex-col items-center py-6 border-r border-gray-100"
+  >
+    <!-- Logo -->
+    <div class="mb-12 text-3xl font-bold text-indigo-600 cursor-pointer group">
+      <img
+        class="w-10 h-10 rounded-full transition-transform duration-300 transform group-hover:scale-110"
+        src="/images/logo.png"
+      />
+    </div>
+
+    <!-- Navegación -->
+    <nav class="flex flex-col space-y-8 flex-1">
+      <!-- Reservar Boletos -->
+      <div class="flex flex-col items-center space-y-1">
+        <button
+          (click)="setActiveTab('book')"
+          [ngClass]="{
+            'text-indigo-600 bg-indigo-50': activeTab() === 'book',
+            'text-gray-400 hover:text-indigo-600': activeTab() !== 'book'
+          }"
+          class="p-3 rounded-xl transition-all duration-200 focus:outline-none"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            ></path>
+          </svg>
+        </button>
+        <span
+          class="text-xs text-center whitespace-nowrap px-2"
+          [ngClass]="{
+            'text-indigo-600 font-semibold': activeTab() === 'book',
+            'text-gray-500': activeTab() !== 'book'
+          }"
+        >
+          Reservar<br />Boletos
+        </span>
+      </div>
+
+      <!-- Gestionar Reservas -->
+      <div class="flex flex-col items-center space-y-1">
+        <button
+          (click)="setActiveTab('manage')"
+          [ngClass]="{
+            'text-indigo-600 bg-indigo-50': activeTab() === 'manage',
+            'text-gray-400 hover:text-indigo-600': activeTab() !== 'manage'
+          }"
+          class="p-3 rounded-xl transition-all duration-200 focus:outline-none"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+            ></path>
+          </svg>
+        </button>
+        <span
+          class="text-xs text-center whitespace-nowrap px-2"
+          [ngClass]="{
+            'text-indigo-600 font-semibold': activeTab() === 'manage',
+            'text-gray-500': activeTab() !== 'manage'
+          }"
+        >
+          Gestionar<br />Reservas
+        </span>
+      </div>
+
+      <!-- Check-in -->
+      <div class="flex flex-col items-center space-y-1">
+        <button
+          (click)="setActiveTab('checkin')"
+          [ngClass]="{
+            'text-indigo-600 bg-indigo-50': activeTab() === 'checkin',
+            'text-gray-400 hover:text-indigo-600': activeTab() !== 'checkin'
+          }"
+          class="p-3 rounded-xl transition-all duration-200 focus:outline-none"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </button>
+        <span
+          class="text-xs text-center whitespace-nowrap px-2"
+          [ngClass]="{
+            'text-indigo-600 font-semibold': activeTab() === 'checkin',
+            'text-gray-500': activeTab() !== 'checkin'
+          }"
+        >
+          Check-in
+        </span>
+      </div>
+
+      <!-- Detalles del Pasajero -->
+      <div class="flex flex-col items-center space-y-1 mt-8">
+        <button
+          (click)="setActiveTab('passenger')"
+          [ngClass]="{
+            'text-indigo-600 bg-indigo-50': activeTab() === 'passenger',
+            'text-gray-400 hover:text-indigo-600': activeTab() !== 'passenger'
+          }"
+          class="p-3 rounded-xl transition-all duration-200 focus:outline-none"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            ></path>
+          </svg>
+        </button>
+        <span class="text-xs text-center whitespace-nowrap px-2 text-gray-500">
+          Detalles del<br />Pasajero
+        </span>
+      </div>
+
+      <!-- Actualizar Contactos -->
+      <div class="flex flex-col items-center space-y-1">
+        <button
+          (click)="setActiveTab('contacts')"
+          [ngClass]="{
+            'text-indigo-600 bg-indigo-50': activeTab() === 'contacts',
+            'text-gray-400 hover:text-indigo-600': activeTab() !== 'contacts'
+          }"
+          class="p-3 rounded-xl transition-all duration-200 focus:outline-none"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+            ></path>
+          </svg>
+        </button>
+        <span class="text-xs text-center whitespace-nowrap px-2 text-gray-500">
+          Actualizar<br />Contactos
+        </span>
+      </div>
+
+      <!-- Detalles del Vuelo -->
+      <div class="flex flex-col items-center space-y-1">
+        <button
+          (click)="setActiveTab('flight')"
+          [ngClass]="{
+            'text-indigo-600 bg-indigo-50': activeTab() === 'flight',
+            'text-gray-400 hover:text-indigo-600': activeTab() !== 'flight'
+          }"
+          class="p-3 rounded-xl transition-all duration-200 focus:outline-none"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            ></path>
+          </svg>
+        </button>
+        <span class="text-xs text-center whitespace-nowrap px-2 text-gray-500">
+          Detalles del<br />Vuelo
+        </span>
+      </div>
+    </nav>
+
+    <!-- Avatar de Usuario -->
+    <div class="mt-auto pt-6">
+      <button (click)="logout()" class="relative group" title="Cerrar Sesión">
+        <img
+          class="h-12 w-12 rounded-full object-cover ring-2 ring-gray-200 group-hover:ring-red-400 transition-all duration-200"
+          [src]="
+            'https://ui-avatars.com/api/?name=' +
+            (user()?.name || 'Usuario') +
+            '&background=6366f1&color=fff'
+          "
+          [alt]="user()?.name || 'Usuario'"
+        />
+        <div
+          class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"
+        ></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido Principal -->
+  <div class="flex-1 overflow-y-auto">
+    <!-- Encabezado -->
+    <div class="bg-white border-b border-gray-200 px-8 py-4">
+      <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-indigo-700">TRIPMATEAI</h1>
+
+        <div class="flex items-center space-x-6">
+          <!-- Barra de Búsqueda -->
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Buscar en TRIPMATEAI"
+              class="w-80 py-2 pl-10 pr-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+            />
+            <svg
+              class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              Cerrar Sesión
-            </button>
-          </div>
-        </div>
-
-        <!-- Trips Section -->
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Mis Viajes</h2>
-            <button 
-              (click)="createSampleTrip()"
-              class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors"
-            >
-              Crear Viaje de Prueba
-            </button>
-          </div>
-
-          <!-- Loading State -->
-          <div *ngIf="isLoading" class="text-center py-12">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p class="mt-4 text-gray-600">Cargando viajes...</p>
-          </div>
-
-          <!-- Trips List -->
-          <div *ngIf="!isLoading && trips.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div 
-              *ngFor="let trip of trips" 
-              class="border-2 border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow"
-            >
-              <div class="flex justify-between items-start mb-4">
-                <h3 class="text-xl font-bold text-gray-800">{{ trip.destination }}</h3>
-                <span 
-                  class="px-3 py-1 rounded-full text-sm font-medium"
-                  [ngClass]="{
-                    'bg-yellow-100 text-yellow-800': trip.status === 'planned',
-                    'bg-green-100 text-green-800': trip.status === 'ongoing',
-                    'bg-gray-100 text-gray-800': trip.status === 'completed'
-                  }"
-                >
-                  {{ trip.status }}
-                </span>
-              </div>
-              
-              <div class="text-gray-600 text-sm space-y-2">
-                <p><strong>Inicio:</strong> {{ trip.startDate.toLocaleDateString() }}</p>
-                <p><strong>Fin:</strong> {{ trip.endDate.toLocaleDateString() }}</p>
-              </div>
-
-              <div class="mt-4 flex gap-2">
-                <button 
-                  (click)="deleteTrip(trip.id)"
-                  class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm"
-                >
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Empty State -->
-          <div *ngIf="!isLoading && trips.length === 0" class="text-center py-12">
-            <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
             </svg>
-            <p class="text-gray-600 text-lg">No tienes viajes todavía</p>
-            <p class="text-gray-400 mt-2">Crea tu primer viaje de prueba</p>
+          </div>
+
+          <!-- Pestañas de Navegación -->
+          <div class="flex space-x-6 text-sm font-medium">
+            <span
+              class="text-indigo-600 border-b-2 border-indigo-600 pb-1 cursor-pointer"
+              >Home</span
+            >
+            <span
+              class="text-gray-600 hover:text-indigo-600 cursor-pointer transition-colors"
+              >Itinerarios</span
+            >
+            <span
+              class="text-gray-600 hover:text-indigo-600 cursor-pointer transition-colors"
+              >Reservas</span
+            >
+            <span
+              class="text-gray-600 hover:text-indigo-600 cursor-pointer transition-colors"
+              >Ajustes</span
+            >
           </div>
         </div>
-
       </div>
     </div>
+
+    <!-- Área de Contenido -->
+    <div class="p-8">
+      <!-- Sección Hero - Planifica tu viaje -->
+      <div
+        class="relative bg-gradient-to-br from-blue-100 via-indigo-50 to-purple-100 rounded-3xl shadow-2xl p-8 mb-8 overflow-hidden"
+      >
+        <!-- Fondo decorativo -->
+        <div
+          class="absolute top-0 right-0 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"
+        ></div>
+        <div
+          class="absolute bottom-0 left-0 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"
+        ></div>
+
+        <div class="relative z-10">
+          <h2 class="text-4xl font-extrabold text-indigo-900 mb-8">
+            Planifica tu proximo viaje
+          </h2>
+
+          <!-- Formulario de búsqueda de vuelos -->
+          <form
+            (ngSubmit)="searchFlights()"
+            class="flex items-center bg-white rounded-2xl shadow-xl p-2 max-w-5xl mx-auto border border-indigo-100"
+          >
+            <!-- Desde -->
+            <div class="flex-1 px-6 py-3 border-r border-gray-200">
+              <label class="text-xs text-gray-500 block mb-1 font-medium"
+                >Desde</label
+              >
+              <input
+                type="text"
+                [(ngModel)]="searchForm.from"
+                name="from"
+                placeholder="Delhi (DEL)"
+                class="w-full text-lg font-semibold text-gray-800 border-none focus:ring-0 p-0 placeholder-gray-400"
+              />
+            </div>
+
+            <!-- Intercambiar Ubicaciones -->
+            <button
+              type="button"
+              (click)="swapLocations()"
+              class="p-3 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+            >
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                ></path>
+              </svg>
+            </button>
+
+            <!-- Hasta -->
+            <div class="flex-1 px-6 py-3 border-r border-gray-200">
+              <label class="text-xs text-gray-500 block mb-1 font-medium"
+                >Hasta</label
+              >
+              <input
+                type="text"
+                [(ngModel)]="searchForm.to"
+                name="to"
+                placeholder="Abu Dhabi (AUH)"
+                class="w-full text-lg font-semibold text-gray-800 border-none focus:ring-0 p-0 placeholder-gray-400"
+              />
+            </div>
+
+            <!-- Fecha -->
+            <div class="flex-1 px-6 py-3">
+              <label class="text-xs text-gray-500 block mb-1 font-medium"
+                >Fecha</label
+              >
+              <input
+                type="date"
+                [(ngModel)]="searchForm.date"
+                name="date"
+                class="w-full text-lg font-semibold text-gray-800 border-none focus:ring-0 p-0"
+              />
+            </div>
+
+            <!-- Botón de Búsqueda -->
+            <button
+              type="submit"
+              class="ml-4 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all hover:shadow-xl transform hover:scale-105"
+            >
+              Buscar
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Sección inferior -->
+      <div class="grid grid-cols-3 gap-6">
+        <!-- Reservas Recientes -->
+        <div class="col-span-2">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">
+            Itinerarios Recientes
+          </h2>
+
+          <div *ngIf="isLoading" class="flex justify-center items-center h-48">
+            <div
+              class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"
+            ></div>
+          </div>
+
+          <div *ngIf="!isLoading" class="grid grid-cols-3 gap-4">
+            <!-- Tarjetas de Viaje -->
+            <div
+              *ngFor="let trip of trips.slice(0, 2)"
+              class="relative rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer group"
+            >
+              <img
+                class="w-full h-48 object-cover"
+                [src]="getDestinationImage(trip.destination)"
+                [alt]="trip.destination"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"
+              ></div>
+
+              <div class="absolute bottom-0 left-0 p-5 w-full">
+                <p class="text-xs text-white/90 mb-2 font-medium">
+                  {{ formatDate(trip.startDate) }}
+                </p>
+                <p class="text-lg font-bold text-white">
+                  {{ trip.destination }} → {{ trip.destination }}
+                </p>
+              </div>
+
+              <button
+                (click)="viewTrip(trip)"
+                class="absolute top-4 right-4 p-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-all shadow-lg group-hover:scale-110"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  ></path>
+                </svg>
+              </button>
+
+              <!-- Badge de Estado -->
+              <div
+                class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold"
+                [ngClass]="{
+                  'bg-green-500 text-white': trip.status === 'completed',
+                  'bg-blue-500 text-white': trip.status === 'ongoing',
+                  'bg-yellow-500 text-white': trip.status === 'planned'
+                }"
+              >
+                {{ trip.status | titlecase }}
+              </div>
+            </div>
+
+            <!-- Botón Agregar Nuevo Viaje -->
+            <button
+              (click)="createSampleTrip()"
+              class="h-48 flex flex-col items-center justify-center bg-white rounded-2xl shadow-xl text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all transform hover:scale-105"
+            >
+              <span class="text-5xl font-bold mb-2">{{ trips.length }}+</span>
+              <span class="text-sm font-medium">Agregar nuevo itinerario</span>
+            </button>
+          </div>
+
+          <!-- Mensaje si no hay viajes -->
+          <div
+            *ngIf="!isLoading && trips.length === 0"
+            class="bg-white rounded-2xl shadow-xl p-12 text-center"
+          >
+            <svg
+              class="w-24 h-24 mx-auto text-gray-300 mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+              ></path>
+            </svg>
+            <h3 class="text-xl font-bold text-gray-700 mb-2">
+              No hay reservas aún
+            </h3>
+            <p class="text-gray-500 mb-6">
+              ¡Comienza a planificar tu próxima aventura!
+            </p>
+            <button
+              (click)="createSampleTrip()"
+              class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors"
+            >
+              Crear itinerario
+            </button>
+          </div>
+        </div>
+
+        <!-- Ofertas de Temporada -->
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">
+            Ofertas Temporales!
+          </h2>
+
+          <div
+            class="relative bg-gradient-to-br from-pink-500 via-purple-600 to-indigo-700 rounded-2xl shadow-2xl p-8 overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer mb-8"
+          >
+            <div class="absolute inset-0 opacity-20">
+              <div
+                class="absolute top-8 right-8 w-24 h-24 bg-white rounded-full"
+              ></div>
+              <div
+                class="absolute bottom-8 left-8 w-16 h-16 bg-white rounded-full"
+              ></div>
+            </div>
+
+            <div class="relative z-10 text-white">
+              <h3 class="text-3xl font-extrabold mb-2">
+                Descuento de Alberto
+              </h3>
+              <p class="text-lg font-light mb-6">
+                El más crack sin duda.
+              </p>
+              <div class="flex items-baseline mb-4">
+                <span class="text-7xl font-black">90%</span>
+                <span class="text-2xl font-semibold ml-2">de Descuento</span>
+              </div>
+              <p class="text-lg font-light mb-6">En todos los desplazamientos</p>
+              <p class="text-sm font-light mb-6">Solamente uso en vaijes invididudales por europa.</p>
+
+              <div class="mt-8">
+                <svg class="w-full h-3" viewBox="0 0 200 100" fill="none">
+                  <path
+                    d="M20 80 Q60 20, 100 60 T180 80"
+                    stroke="white"
+                    stroke-width="2"
+                    fill="none"
+                    opacity="0.5"
+                  />
+                  <circle cx="100" cy="60" r="8" fill="white" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="relative bg-gradient-to-br from-blue-500 via-cyan-600 to-green-700 rounded-2xl shadow-2xl p-8 overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer mb-8"
+          >
+            <div class="absolute inset-0 opacity-20">
+              <div
+                class="absolute top-8 right-8 w-24 h-24 bg-white rounded-full"
+              ></div>
+              <div
+                class="absolute bottom-8 left-8 w-16 h-16 bg-white rounded-full"
+              ></div>
+            </div>
+
+            <div class="relative z-10 text-white">
+              <h3 class="text-3xl font-extrabold mb-2">
+                Descuento de Javi
+              </h3>
+              <p class="text-lg font-light mb-6">
+                El pobre es pesímo.
+              </p>
+              <div class="flex items-baseline mb-4">
+                <span class="text-7xl font-black">1%</span>
+                <span class="text-2xl font-semibold ml-2">de Descuento</span>
+              </div>
+              <p class="text-lg font-light mb-6">
+                En reservas de hotel de última hora
+              </p>
+
+              <div class="mt-8">
+                <svg class="w-full h-3" viewBox="0 0 200 100" fill="none">
+                  <path
+                    d="M20 80 C40 40, 160 40, 180 80"
+                    stroke="white"
+                    stroke-width="2"
+                    fill="none"
+                    opacity="0.5"
+                  />
+                  <circle cx="100" cy="60" r="8" fill="white" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="relative bg-gradient-to-br from-red-500 via-yellow-600 to-orange-700 rounded-2xl shadow-2xl p-8 overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer mb-8"
+          >
+            <div class="absolute inset-0 opacity-20">
+              <div
+                class="absolute top-8 right-8 w-24 h-24 bg-white rounded-full"
+              ></div>
+              <div
+                class="absolute bottom-8 left-8 w-16 h-16 bg-white rounded-full"
+              ></div>
+            </div>
+
+            <div class="relative z-10 text-white">
+              <h3 class="text-3xl font-extrabold mb-2">
+                Descuento de Carlos
+              </h3>
+              <p class="text-lg font-light mb-6">
+                El más guarro.
+              </p>
+              <div class="flex items-baseline mb-4">
+                <span class="text-7xl font-black">25%</span>
+                <span class="text-2xl font-semibold ml-2">de Descuento</span>
+              </div>
+              <p class="text-lg font-light mb-6">
+                En paquetes de aventura extremos
+              </p>
+
+              <div class="mt-8">
+                <svg class="w-full h-3" viewBox="0 0 200 100" fill="none">
+                  <path
+                    d="M20 80 L60 20 L140 20 L180 80"
+                    stroke="white"
+                    stroke-width="2"
+                    fill="none"
+                    opacity="0.5"
+                  />
+                  <polygon
+                    points="100,20 120,60 80,60"
+                    fill="white"
+                    opacity="0.5"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="relative bg-gradient-to-br from-gray-700 via-gray-900 to-black rounded-2xl shadow-2xl p-8 overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer"
+          >
+            <div class="absolute inset-0 opacity-20">
+              <div
+                class="absolute top-8 right-8 w-24 h-24 bg-white rounded-full"
+              ></div>
+              <div
+                class="absolute bottom-8 left-8 w-16 h-16 bg-white rounded-full"
+              ></div>
+            </div>
+
+            <div class="relative z-10 text-white">
+              <h3 class="text-3xl font-extrabold mb-2">
+                Descuento de Laura
+              </h3>
+              <p class="text-lg font-light mb-6">
+                Si pongo algo me llevan preso.
+              </p>
+              <div class="flex items-baseline mb-4">
+                <span class="text-7xl font-black">10%</span>
+                <span class="text-2xl font-semibold ml-2">de Descuento</span>
+              </div>
+              <p class="text-lg font-light mb-6">
+                En cualquier destino nacional
+              </p>
+
+              <div class="mt-8">
+                <svg class="w-full h-3" viewBox="0 0 200 100" fill="none">
+                  <rect
+                    x="20"
+                    y="40"
+                    width="160"
+                    height="20"
+                    rx="10"
+                    ry="10"
+                    stroke="white"
+                    stroke-width="2"
+                    fill="none"
+                    opacity="0.5"
+                  />
+                  <circle cx="50" cy="50" r="8" fill="white" />
+                  <circle cx="150" cy="50" r="8" fill="white" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
