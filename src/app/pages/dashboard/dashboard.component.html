@@ -1,27 +1,87 @@
-<div class="min-h-screen bg-slate-500 flex flex-col items-center justify-center p-6 text-gray-800">
-    <div class="bg-white border rounded-xl shadow p-8 text-center w-full max-w-md">
-      
-      <div class="flex items-center justify-center bg-green-600 text-white rounded-t-xl p-4 mb-4">
-        <div class="mr-3 font-bold text-xl">💳 Unicaja Banco</div>
+    <div class="min-h-screen bg-gray-50 p-8">
+      <div class="max-w-7xl mx-auto">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+          <div class="flex justify-between items-center">
+            <div>
+              <h1 class="text-3xl font-bold text-gray-800">
+                Bienvenido, {{ user()?.name }}!
+              </h1>
+              <p class="text-gray-600 mt-1">{{ user()?.email }}</p>
+            </div>
+            <button 
+              (click)="logout()"
+              class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors"
+            >
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+
+        <!-- Trips Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Mis Viajes</h2>
+            <button 
+              (click)="createSampleTrip()"
+              class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors"
+            >
+              Crear Viaje de Prueba
+            </button>
+          </div>
+
+          <!-- Loading State -->
+          <div *ngIf="isLoading" class="text-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p class="mt-4 text-gray-600">Cargando viajes...</p>
+          </div>
+
+          <!-- Trips List -->
+          <div *ngIf="!isLoading && trips.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div 
+              *ngFor="let trip of trips" 
+              class="border-2 border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow"
+            >
+              <div class="flex justify-between items-start mb-4">
+                <h3 class="text-xl font-bold text-gray-800">{{ trip.destination }}</h3>
+                <span 
+                  class="px-3 py-1 rounded-full text-sm font-medium"
+                  [ngClass]="{
+                    'bg-yellow-100 text-yellow-800': trip.status === 'planned',
+                    'bg-green-100 text-green-800': trip.status === 'ongoing',
+                    'bg-gray-100 text-gray-800': trip.status === 'completed'
+                  }"
+                >
+                  {{ trip.status }}
+                </span>
+              </div>
+              
+              <div class="text-gray-600 text-sm space-y-2">
+                <p><strong>Inicio:</strong> {{ trip.startDate.toLocaleDateString() }}</p>
+                <p><strong>Fin:</strong> {{ trip.endDate.toLocaleDateString() }}</p>
+              </div>
+
+              <div class="mt-4 flex gap-2">
+                <button 
+                  (click)="deleteTrip(trip.id)"
+                  class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="!isLoading && trips.length === 0" class="text-center py-12">
+            <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path>
+            </svg>
+            <p class="text-gray-600 text-lg">No tienes viajes todavía</p>
+            <p class="text-gray-400 mt-2">Crea tu primer viaje de prueba</p>
+          </div>
+        </div>
+
       </div>
-  
-      <h1 class="text-3xl font-semibold mb-2">Dashboard <br>Alberto Maldonado Triana</h1>
-      <p class="text-gray-500 mb-6">Bienvenido, usuario Hyper-Premium.</p>
-  
-      <div class="mb-6">
-        <p class="text-xl font-medium">💰 Cantidad actual de la cuenta:</p>
-        <p class="text-3xl font-bold text-green-600 mt-2">999.999.999,99€</p>
-        <p class="text-sm text-gray-400 mt-1">diablo que panocha 💸</p>
-      </div>
-  
-      <div class="mb-6">
-        <p class="text-lg">🕶️ Estado:</p>
-        <p class="font-medium text-blue-600">En la luna 🚀🌗!</p>
-      </div>
-  
-      <button class="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition">
-        Cerrar sesión
-      </button>
     </div>
-  </div>
-  

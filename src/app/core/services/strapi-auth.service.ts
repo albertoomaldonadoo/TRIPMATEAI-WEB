@@ -28,7 +28,7 @@ export interface RegisterResponse {
  * después del registro mediante una actualización del perfil.
  */
 export interface StrapiUser {
-  id: number
+  id: string
   documentId: string
   username: string
   name?: string

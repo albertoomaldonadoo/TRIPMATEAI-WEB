@@ -1,5 +1,8 @@
-export interface User{
-    name:string;
-    surname:string;
-    email:string;
+export interface User {
+  id?: string;         
+  email: string;
+  name: string;
+  surname: string;
+  photoURL?: string;  
+  createdAt?: Date;   
 }

@@ -1,10 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal, effect, untracked } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LocalStorageAuthService } from '../../core/services/local-storate-auth.service';
-import { RouterLink, Router, ActivatedRoute } from '@angular/router';
-import { StrapiAuthService } from '../../core/services/strapi-auth.service';
-import { User } from '../../core/models/user';
+import { RouterLink, Router } from '@angular/router';
+import { FirebaseAuthService } from '../../core/services/firebase-auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,19 +11,20 @@ import { User } from '../../core/models/user';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-
   formLogin;
-  private router:Router = inject(Router);
-  readonly navigateTo:string;
+  private router: Router = inject(Router);
+  auth: FirebaseAuthService = inject(FirebaseAuthService);
+  readonly navigateTo: string;
+  isLoading = false;
 
-  constructor(private formSvc:FormBuilder,
-    private auth:StrapiAuthService
-  ){
+  constructor(private formSvc: FormBuilder) {
     this.formLogin = this.formSvc.group({
-      'email':['', [Validators.required, Validators.email]],
-      'password':['', [Validators.required]],
+      'email': ['', [Validators.required, Validators.email]],
+      'password': ['', [Validators.required]],
     });
+    
     this.navigateTo = history.state?.['navigateTo'] || '/dashboard';
+    
     effect(() => {
       const user = this.auth.user();
       if (user) {
@@ -34,30 +33,54 @@ export class LoginComponent {
     });
   }
 
-  onSubmit(){
-    this.auth.login(this.formLogin.value as any);
+  async onSubmit() {
+    if (this.formLogin.invalid) {
+      this.formLogin.markAllAsTouched();
+      return;
+    }
+
+    this.isLoading = true;
+    
+    try {
+      await this.auth.login(this.formLogin.value as any);
+      // La navegación se maneja automáticamente con el effect
+    } catch (error) {
+      console.error('Error en login:', error);
+      this.isLoading = false;
+    }
   }
 
-  getError(control:string){
-       
-    switch(control){
+  async onGoogleSignIn() {
+    this.isLoading = true;
+    try {
+      await this.auth.loginWithGoogle();
+      // La navegación se maneja automáticamente con el effect
+    } catch (error) {
+      console.error('Error en login con Google:', error);
+      this.isLoading = false;
+    }
+  }
+
+  getError(control: string): string {
+    switch (control) {
       case 'email':
-        if(this.formLogin.controls.email.errors!=null && 
-           Object.keys(this.formLogin.controls.email.errors).includes('required'))
-           return "El campo email es requerido";
-        else if(this.formLogin.controls.email.errors!=null && 
-           Object.keys(this.formLogin.controls.email.errors).includes('email'))
-           return "El email no es correcto";
+        if (this.formLogin.controls.email.errors != null &&
+          Object.keys(this.formLogin.controls.email.errors).includes('required'))
+          return "El campo email es requerido";
+        else if (this.formLogin.controls.email.errors != null &&
+          Object.keys(this.formLogin.controls.email.errors).includes('email'))
+          return "El email no es correcto";
+        break;
         
+      case 'password':
+        if (this.formLogin.controls.password.errors != null &&
+          Object.keys(this.formLogin.controls.password.errors).includes('required'))
+          return "El campo password es requerido";
         break;
-      case 'password': 
-        if(this.formLogin.controls.password.errors!=null && 
-           Object.keys(this.formLogin.controls.password.errors).includes('required'))
-           return "El campo email es requerido";
-        break;
-      default:return "";
+        
+      default:
+        return "";
     }
     return "";
   }
-
 }
