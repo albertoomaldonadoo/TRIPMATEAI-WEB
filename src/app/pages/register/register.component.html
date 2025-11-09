@@ -1,0 +1,240 @@
+<div class="min-h-screen flex items-center justify-center bg-black p-4">
+
+  <!-- Contenedor principal -->
+  <div class="relative w-full max-w-5xl bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
+    <div class="flex flex-col lg:flex-row">
+      
+      <!-- Sección izquierda con imagen -->
+      <div class="lg:w-2/5 relative overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900">
+        <div class="absolute inset-0 bg-cover bg-center opacity-40 animate-[zoom_20s_ease-in-out_infinite]" 
+             style="background-image: url('/images/imagebeachlogin.jpeg');"></div>
+        
+        <div class="relative z-10 h-full min-h-[300px] lg:min-h-[700px] flex flex-col items-center justify-center p-8 text-white">
+          <!-- Logo/Imagen TRAVEL -->
+          <div class="mb-6 transform hover:scale-110 transition-transform duration-500">
+            <div class="w-24 h-24 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/30 animate-[float_3s_ease-in-out_infinite]">
+              <img src="/images/logo.png" 
+                   alt="Travel" 
+                   class="w-full h-full object-cover">
+            </div>
+          </div>
+          
+          <h1 class="text-5xl lg:text-6xl font-bold mb-4 text-center animate-[fadeInUp_1s_ease-out]">
+            TRIPMATE<br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+              AI
+            </span>
+          </h1>
+          
+          <p class="text-center text-gray-300 mb-2 animate-[fadeInUp_1s_ease-out_0.2s_both]">
+            Los itinerarios más famosos al alcance 
+          </p>
+          <p class="text-center text-gray-300 animate-[fadeInUp_1s_ease-out_0.3s_both]">
+            de cualquiera
+          </p>
+          
+          <div class="mt-8 flex gap-2">
+            <div class="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+            <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+            <div class="w-2 h-2 bg-pink-400 rounded-full animate-bounce" style="animation-delay: 0.4s;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección derecha con formulario -->
+      <div class="lg:w-3/5 p-8 lg:p-12">
+        <div class="animate-[fadeInRight_0.8s_ease-out]">
+          <h2 class="text-3xl font-bold text-gray-800 mb-2">Crear cuenta</h2>
+          <p class="text-gray-600 mb-8">Regístrate para comenzar tu aventura</p>
+
+          <form [formGroup]="formRegister" (ngSubmit)="onSubmit()">
+            <div class="mb-5 animate-[slideInLeft_0.6s_ease-out_0.2s_both]">
+              <label class="block text-gray-700 text-sm font-semibold mb-2" for="name">
+                Nombre
+              </label>
+              <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" 
+                       fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </div>
+                <input
+                  id="name"
+                  name="name"
+                  autocomplete="given-name"
+                  formControlName="name"
+                  placeholder="Tu nombre"
+                  class="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 outline-none"
+                  type="text"
+                />
+              </div>
+              @if(formRegister.controls['name'].touched && formRegister.controls['name'].errors){
+                <span class="text-red-500 text-sm mt-2 block animate-[shake_0.5s_ease-in-out]">
+                  {{ getError("name") }}
+                </span>
+              }
+            </div>
+
+            <div class="mb-5 animate-[slideInLeft_0.6s_ease-out_0.3s_both]">
+              <label class="block text-gray-700 text-sm font-semibold mb-2" for="surname">
+                Apellidos
+              </label>
+              <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" 
+                       fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </div>
+                <input
+                  id="surname"
+                  name="surname"
+                  autocomplete="family-name"
+                  formControlName="surname"
+                  placeholder="Tus apellidos"
+                  class="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 outline-none"
+                  type="text"
+                />
+              </div>
+              @if(formRegister.controls['surname'].touched && formRegister.controls['surname'].errors){
+                <span class="text-red-500 text-sm mt-2 block animate-[shake_0.5s_ease-in-out]">
+                  {{ getError("surname") }}
+                </span>
+              }
+            </div>
+
+            <div class="mb-5 animate-[slideInLeft_0.6s_ease-out_0.4s_both]">
+              <label class="block text-gray-700 text-sm font-semibold mb-2" for="email">
+                Email
+              </label>
+              <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" 
+                       fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+                  </svg>
+                </div>
+                <input
+                  id="email"
+                  name="email"
+                  autocomplete="username"
+                  formControlName="email"
+                  placeholder="tu@email.com"
+                  class="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 outline-none"
+                  type="text"
+                />
+              </div>
+              @if(formRegister.controls['email'].touched && formRegister.controls['email'].errors){
+                <span class="text-red-500 text-sm mt-2 block animate-[shake_0.5s_ease-in-out]">
+                  {{ getError("email") }}
+                </span>
+              }
+            </div>
+
+            <div class="mb-5 animate-[slideInLeft_0.6s_ease-out_0.5s_both]">
+              <label class="block text-gray-700 text-sm font-semibold mb-2" for="password">
+                Contraseña
+              </label>
+              <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" 
+                       fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                  </svg>
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  formControlName="password"
+                  autocomplete="new-password"
+                  placeholder="••••••••••"
+                  class="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 outline-none"
+                  type="password"
+                />
+              </div>
+              @if(formRegister.controls['password'].touched && formRegister.controls['password'].errors){
+                <span class="text-red-500 text-sm mt-2 block animate-[shake_0.5s_ease-in-out]">
+                  {{ getError("password") }}
+                </span>
+              }
+            </div>
+
+            <div class="mb-6 animate-[slideInLeft_0.6s_ease-out_0.6s_both]">
+              <label class="block text-gray-700 text-sm font-semibold mb-2" for="confirmPassword">
+                Confirmar contraseña
+              </label>
+              <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" 
+                       fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                  </svg>
+                </div>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  formControlName="confirmPassword"
+                  autocomplete="new-password"
+                  placeholder="••••••••••"
+                  class="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 outline-none"
+                  type="password"
+                />
+              </div>
+              @if(formRegister.controls['confirmPassword'].touched && formRegister.controls['confirmPassword'].errors){
+                <span class="text-red-500 text-sm mt-2 block animate-[shake_0.5s_ease-in-out]">
+                  {{ getError("confirmPassword") }}
+                </span>
+              }
+            </div>
+
+            <button
+              class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 animate-[slideInLeft_0.6s_ease-out_0.7s_both]"
+              type="submit"
+            >
+              Registrarse
+            </button>
+
+            <div class="relative my-6 animate-[fadeIn_0.6s_ease-out_0.8s_both]">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-300"></div>
+              </div>
+              <div class="relative flex justify-center text-sm">
+                <span class="px-4 bg-white text-gray-500">o continúa con</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="w-full bg-white border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 animate-[slideInLeft_0.6s_ease-out_0.9s_both]"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              Google
+            </button>
+
+            <div class="mt-8 text-center animate-[fadeIn_0.6s_ease-out_1s_both]">
+              <p class="text-gray-600 text-sm">
+                ¿Ya tienes cuenta? 
+                <a [routerLink]="['/login']" [state]="{ navigateTo: navigateTo }"
+                   class="text-blue-600 hover:text-blue-700 font-semibold transition-colors ml-1">
+                  Inicia sesión aquí
+                </a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
