@@ -1,27 +1,32 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { FirebaseAuthService } from '../../core/services/firebase-auth.service';
-import { FirestoreService } from '../../core/services/firestore.service';
+import { Component as Component4, inject as inject4, OnInit as OnInit4 } from '@angular/core';
+import { CommonModule as CommonModule4 } from '@angular/common';
+import { Router as Router4 } from '@angular/router';
+import { FirebaseAuthService as FirebaseAuthService4 } from '../../core/services/firebase-auth.service';
+import { FirestoreService as FirestoreService4 } from '../../core/services/firestore.service';
 
 interface Trip {
-  id: string; destination: string; origin: string; startDate: Date; endDate: Date;
-  status: 'planned' | 'ongoing' | 'completed'; userId: string;
+  id: string;
+  destination: string;
+  origin: string;
+  startDate: Date;
+  endDate: Date;
+  status: 'planned' | 'ongoing' | 'completed';
+  userId: string;
 }
 
-@Component({
+@Component4({
   selector: 'app-itineraries',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule4],
   templateUrl: './itineraries.component.html',
   styleUrl: './itineraries.component.scss'
 })
-export class ItinerariesComponent implements OnInit {
-  auth = inject(FirebaseAuthService);
-  firestore = inject(FirestoreService);
-  router = inject(Router);
+export class ItinerariesComponent implements OnInit4 {
+  auth = inject4(FirebaseAuthService4);
+  firestore = inject4(FirestoreService4);
+  router = inject4(Router4);
   user = this.auth.user;
-  trips = signal<Trip[]>([]);
+  trips: Trip[] = [];
   isLoading = false;
 
   private destinationImages: { [key: string]: string } = {
@@ -34,34 +39,48 @@ export class ItinerariesComponent implements OnInit {
     'default': 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&auto=format&fit=crop'
   };
 
-  async ngOnInit() { await this.loadTrips(); }
-  goBack() { this.router.navigate(['/dashboard']); }
+  async ngOnInit() {
+    await this.loadTrips();
+  }
+
+  goBack() {
+    this.router.navigate(['/dashboard']);
+  }
 
   async loadTrips() {
     const userId = this.user()?.id;
     if (!userId) return;
+
     this.isLoading = true;
     try {
-      const trips = await this.firestore.getFilteredCollection('trips', [['userId', '==', userId]], 'startDate');
-      this.trips.set(trips.map(t => ({
+      const tripsData = await this.firestore.getFilteredCollection(
+        'trips',
+        [['userId', '==', userId]],
+        'startDate'
+      );
+      
+      this.trips = tripsData.map((t: any) => ({
         ...t,
         startDate: t.startDate?.toDate ? t.startDate.toDate() : new Date(t.startDate),
         endDate: t.endDate?.toDate ? t.endDate.toDate() : new Date(t.endDate)
-      })));
+      }));
     } catch (error) {
       console.error('Error cargando viajes:', error);
-      this.trips.set([]);
+      this.trips = [];
     } finally {
       this.isLoading = false;
     }
   }
 
   viewTrip(trip: Trip) {
-    this.router.navigate(['/flight-details'], { queryParams: { tripId: trip.id } });
+    this.router.navigate(['/flight-details'], {
+      queryParams: { tripId: trip.id }
+    });
   }
 
   async deleteTrip(tripId: string) {
     if (!confirm('¿Eliminar este itinerario?')) return;
+
     try {
       await this.firestore.deleteDocument('trips', tripId);
       await this.loadTrips();
@@ -70,17 +89,28 @@ export class ItinerariesComponent implements OnInit {
     }
   }
 
-  createNewTrip() { this.router.navigate(['/book-tickets']); }
+  createNewTrip() {
+    this.router.navigate(['/book-tickets']);
+  }
+
   getDestinationImage(destination: string): string {
     return this.destinationImages[destination] || this.destinationImages['default'];
   }
 
   formatDate(date: Date): string {
-    return new Intl.DateTimeFormat('es-ES', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
+    return new Intl.DateTimeFormat('es-ES', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    }).format(date);
   }
 
   getStatusText(status: string): string {
-    const map: { [key: string]: string } = { 'planned': 'Planificado', 'ongoing': 'En Curso', 'completed': 'Completado' };
+    const map: { [key: string]: string } = {
+      'planned': 'Planificado',
+      'ongoing': 'En Curso',
+      'completed': 'Completado'
+    };
     return map[status] || status;
   }
 

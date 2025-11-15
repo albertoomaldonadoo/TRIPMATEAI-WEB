@@ -1,18 +1,21 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { FirebaseAuthService } from '../../core/services/firebase-auth.service';
+import { Component as Component3, inject as inject3 } from '@angular/core';
+import { CommonModule as CommonModule3 } from '@angular/common';
+import { Router as Router3 } from '@angular/router';
+import { FirebaseAuthService as FirebaseAuthService3 } from '../../core/services/firebase-auth.service';
 
-@Component({
+@Component3({
   selector: 'app-flight-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule3],
   templateUrl: './flight-details.component.html',
   styleUrl: './flight-details.component.scss'
 })
 export class FlightDetailsComponent {
-  auth = inject(FirebaseAuthService);
-  router = inject(Router);
+  auth = inject3(FirebaseAuthService3);
+  router = inject3(Router3);
   user = this.auth.user;
-  goBack() { this.router.navigate(['/dashboard']); }
+
+  goBack() {
+    this.router.navigate(['/dashboard']);
+  }
 }

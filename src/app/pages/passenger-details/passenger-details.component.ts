@@ -6,8 +6,14 @@ import { FirebaseAuthService } from '../../core/services/firebase-auth.service';
 import { FirestoreService } from '../../core/services/firestore.service';
 
 interface PassengerInfo {
-  name: string; surname: string; dateOfBirth: string; nationality: string;
-  passportNumber: string; passportExpiry: string; email: string; phone: string;
+  name: string;
+  surname: string;
+  dateOfBirth: string;
+  nationality: string;
+  passportNumber: string;
+  passportExpiry: string;
+  email: string;
+  phone: string;
 }
 
 @Component({
@@ -22,20 +28,37 @@ export class PassengerDetailsComponent implements OnInit {
   firestore = inject(FirestoreService);
   router = inject(Router);
   user = this.auth.user;
+  
   passengerInfo: PassengerInfo = {
-    name: '', surname: '', dateOfBirth: '', nationality: '',
-    passportNumber: '', passportExpiry: '', email: '', phone: ''
+    name: '',
+    surname: '',
+    dateOfBirth: '',
+    nationality: '',
+    passportNumber: '',
+    passportExpiry: '',
+    email: '',
+    phone: ''
   };
 
-  async ngOnInit() { await this.loadPassengerInfo(); }
-  goBack() { this.router.navigate(['/dashboard']); }
+  isSaving = false;
+
+  async ngOnInit() {
+    await this.loadPassengerInfo();
+  }
+
+  goBack() {
+    this.router.navigate(['/dashboard']);
+  }
 
   async loadPassengerInfo() {
     const userId = this.user()?.id;
     if (!userId) return;
+
     try {
       const profile = await this.firestore.getUserProfile(userId);
-      if (profile) this.passengerInfo = { ...this.passengerInfo, ...profile };
+      if (profile) {
+        this.passengerInfo = { ...this.passengerInfo, ...profile };
+      }
     } catch (error) {
       console.error('Error cargando información:', error);
     }
@@ -43,13 +66,20 @@ export class PassengerDetailsComponent implements OnInit {
 
   async savePassengerInfo() {
     const userId = this.user()?.id;
-    if (!userId) { alert('Debes estar autenticado'); return; }
+    if (!userId) {
+      alert('Debes estar autenticado');
+      return;
+    }
+
+    this.isSaving = true;
     try {
       await this.firestore.updateDocument('users', userId, this.passengerInfo);
       alert('Información guardada exitosamente');
     } catch (error) {
       console.error('Error guardando información:', error);
       alert('Error al guardar la información');
+    } finally {
+      this.isSaving = false;
     }
   }
 }
