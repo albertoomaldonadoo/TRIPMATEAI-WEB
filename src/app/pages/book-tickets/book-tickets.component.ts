@@ -19,141 +19,20 @@ interface Flight {
   available: boolean;
 }
 
+// Interfaz para el usuario (simulada)
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 @Component({
   selector: 'app-book-tickets',
   standalone: true,
+  // Asegúrate de que los imports se mantengan
   imports: [CommonModule, FormsModule],
-  template: `
-    <div class="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-50 to-purple-100">
-      <!-- Header -->
-      <div class="bg-white border-b border-gray-200 px-8 py-4">
-        <div class="flex justify-between items-center">
-          <div class="flex items-center space-x-4">
-            <button (click)="goBack()" class="text-indigo-600 hover:text-indigo-700">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-              </svg>
-            </button>
-            <h1 class="text-3xl font-bold text-gray-800">Reservar Boletos</h1>
-          </div>
-          
-          <div class="flex items-center space-x-4">
-            <img
-              class="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-500"
-              [src]="'https://ui-avatars.com/api/?name=' + (user()?.name || 'Usuario') + '&background=6366f1&color=fff'"
-              [alt]="user()?.name || 'Usuario'"
-            />
-          </div>
-        </div>
-      </div>
-
-      <!-- Contenido Principal -->
-      <div class="max-w-7xl mx-auto p-8">
-        <!-- Formulario de Búsqueda -->
-        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-          <h2 class="text-2xl font-bold text-gray-800 mb-6">Buscar Vuelos</h2>
-          
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Origen</label>
-              <input
-                [(ngModel)]="searchForm.from"
-                type="text"
-                placeholder="Ciudad de origen"
-                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Destino</label>
-              <input
-                [(ngModel)]="searchForm.to"
-                type="text"
-                placeholder="Ciudad de destino"
-                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
-              <input
-                [(ngModel)]="searchForm.date"
-                type="date"
-                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              />
-            </div>
-            
-            <div class="flex items-end">
-              <button
-                (click)="searchFlights()"
-                class="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors"
-              >
-                Buscar Vuelos
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Resultados de Búsqueda -->
-        <div *ngIf="searchResults().length > 0" class="space-y-4">
-          <h2 class="text-2xl font-bold text-gray-800 mb-4">Vuelos Disponibles</h2>
-          
-          <div *ngFor="let flight of searchResults()" 
-               class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-            <div class="flex justify-between items-center">
-              <div class="flex items-center space-x-6">
-                <div class="text-center">
-                  <p class="text-2xl font-bold text-gray-800">{{flight.departure}}</p>
-                  <p class="text-sm text-gray-500">{{flight.from}}</p>
-                </div>
-                
-                <div class="flex flex-col items-center">
-                  <p class="text-sm text-gray-500 mb-2">{{flight.duration}}</p>
-                  <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 bg-indigo-600 rounded-full"></div>
-                    <div class="w-32 h-0.5 bg-gray-300"></div>
-                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                    </svg>
-                  </div>
-                  <p class="text-xs text-gray-500 mt-2">
-                    {{flight.stops === 0 ? 'Directo' : flight.stops + ' escala(s)'}}
-                  </p>
-                </div>
-                
-                <div class="text-center">
-                  <p class="text-2xl font-bold text-gray-800">{{flight.arrival}}</p>
-                  <p class="text-sm text-gray-500">{{flight.to}}</p>
-                </div>
-              </div>
-              
-              <div class="text-right">
-                <p class="text-sm text-gray-500">{{flight.airline}} - {{flight.flightNumber}}</p>
-                <p class="text-3xl font-bold text-indigo-600 mt-2">€{{flight.price}}</p>
-                <button
-                  (click)="bookFlight(flight)"
-                  class="mt-4 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors"
-                >
-                  Reservar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sin Resultados -->
-        <div *ngIf="searched && searchResults().length === 0" 
-             class="bg-white rounded-2xl shadow-xl p-12 text-center">
-          <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          <h3 class="text-xl font-bold text-gray-700 mb-2">No se encontraron vuelos</h3>
-          <p class="text-gray-500">Intenta con otras fechas o destinos</p>
-        </div>
-      </div>
-    </div>
-  `,
+  // Nota: Se ha eliminado el 'template' de aquí ya que estás usando un archivo 'book-tickets.component.html'
+  templateUrl: './book-tickets.component.html', 
   styles: []
 })
 export class BookTicketsComponent {
@@ -161,9 +40,11 @@ export class BookTicketsComponent {
   firestore = inject(FirestoreService);
   router = inject(Router);
   
-  user = this.auth.user;
+  user = this.auth.user as () => User | null; // Tipado para user
   searchResults = signal<Flight[]>([]);
   searched = false;
+  isSearching = false; // Añadida o asegurada para el estado de búsqueda
+  isBooking = signal(false); // 👈 NUEVA: Estado para la reserva
   
   searchForm = {
     from: '',
@@ -175,65 +56,103 @@ export class BookTicketsComponent {
     this.router.navigate(['/dashboard']);
   }
 
+  // Se mantiene la simulación de búsqueda de vuelos
   searchFlights() {
+    this.isSearching = true; // Empieza a buscar
     this.searched = true;
     
-    // Simulación de búsqueda de vuelos
-    const mockFlights: Flight[] = [
-      {
-        id: '1',
-        airline: 'Iberia',
-        flightNumber: 'IB3456',
-        from: this.searchForm.from || 'Madrid',
-        to: this.searchForm.to || 'Barcelona',
-        departure: '10:30',
-        arrival: '12:00',
-        price: 120,
-        duration: '1h 30m',
-        stops: 0,
-        available: true
-      },
-      {
-        id: '2',
-        airline: 'Vueling',
-        flightNumber: 'VY8912',
-        from: this.searchForm.from || 'Madrid',
-        to: this.searchForm.to || 'Barcelona',
-        departure: '14:15',
-        arrival: '15:50',
-        price: 95,
-        duration: '1h 35m',
-        stops: 0,
-        available: true
-      },
-      {
-        id: '3',
-        airline: 'Air Europa',
-        flightNumber: 'UX2345',
-        from: this.searchForm.from || 'Madrid',
-        to: this.searchForm.to || 'Barcelona',
-        departure: '18:00',
-        arrival: '19:30',
-        price: 110,
-        duration: '1h 30m',
-        stops: 0,
-        available: true
-      }
-    ];
-    
-    this.searchResults.set(mockFlights);
+    // Simulación de búsqueda de vuelos con un pequeño retraso
+    setTimeout(() => {
+        const mockFlights: Flight[] = [
+          {
+            id: '1',
+            airline: 'Iberia',
+            flightNumber: 'IB3456',
+            from: this.searchForm.from || 'Madrid',
+            to: this.searchForm.to || 'Barcelona',
+            departure: '10:30',
+            arrival: '12:00',
+            price: 120,
+            duration: '1h 30m',
+            stops: 0,
+            available: true
+          },
+          {
+            id: '2',
+            airline: 'Vueling',
+            flightNumber: 'VY8912',
+            from: this.searchForm.from || 'Madrid',
+            to: this.searchForm.to || 'Barcelona',
+            departure: '14:15',
+            arrival: '15:50',
+            price: 95,
+            duration: '1h 35m',
+            stops: 0,
+            available: true
+          },
+          {
+            id: '3',
+            airline: 'Air Europa',
+            flightNumber: 'UX2345',
+            from: this.searchForm.from || 'Madrid',
+            to: this.searchForm.to || 'Barcelona',
+            departure: '18:00',
+            arrival: '19:30',
+            price: 110,
+            duration: '1h 30m',
+            stops: 0,
+            available: true
+          }
+        ];
+        
+        this.searchResults.set(mockFlights);
+        this.isSearching = false; // Termina la búsqueda
+    }, 1500); // Simula un retraso de 1.5 segundos
   }
 
+  // 👈 MODIFICADA: Función para la reserva de vuelo
   async bookFlight(flight: Flight) {
     const userId = this.user()?.id;
     if (!userId) {
-      alert('Debes estar autenticado para reservar vuelos');
+      alert('Debes estar autenticado para reservar vuelos.');
       return;
     }
 
-    const bookingId = `booking_${Date.now()}`;
-    const bookingDate = new Date(this.searchForm.date || new Date());
+    if (this.isBooking()) { // Evita doble click
+      return;
+    }
 
+    // --- ARREGLO INICIADO: Validar que no se pueda reservar en el pasado ---
+    let bookingDate: Date;
+    let isPastDate = false;
+
+    if (this.searchForm.date) {
+        // Crea un objeto Date desde el string 'YYYY-MM-DD' a medianoche UTC para la comparación
+        bookingDate = new Date(this.searchForm.date + 'T00:00:00.000Z');
+        
+        // Obtiene la fecha de hoy a medianoche UTC
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
+
+        // Comprueba si la fecha del formulario es estrictamente anterior a hoy (pasada)
+        if (bookingDate < today) {
+            isPastDate = true;
+        }
+    } else {
+        // Si no hay fecha en el formulario, usa la fecha actual (que no es pasada)
+        bookingDate = new Date();
+    }
+
+    if (isPastDate) {
+        alert('❌ Error al reservar el vuelo. No se puede reservar un vuelo con una fecha pasada.');
+        return; // Detiene la ejecución antes de intentar la reserva en Firestore
+    }
+    // --- ARREGLO FINALIZADO: Validar que no se pueda reservar en el pasado ---
+
+    this.isBooking.set(true); // Empieza la reserva
+
+    const bookingId = `${userId}_${flight.id}_${Date.now()}`;
+    
     try {
       await this.firestore.setDocument('bookings', bookingId, {
         userId,
@@ -244,17 +163,23 @@ export class BookTicketsComponent {
         to: flight.to,
         departure: flight.departure,
         arrival: flight.arrival,
-        date: bookingDate,
+        date: bookingDate, // Usar la fecha procesada
         price: flight.price,
         status: 'confirmed',
-        createdAt: new Date()
+        createdAt: new Date(),
+        userName: this.user()?.name // Añadir nombre del usuario para mejor contexto
       });
       
-      alert(`¡Vuelo ${flight.flightNumber} reservado exitosamente!`);
+      this.isBooking.set(false); // Finaliza la reserva (éxito)
+      // 👈 ÉXITO: Alerta y redirección
+      alert(`🎉 ¡Vuelo ${flight.flightNumber} reservado exitosamente! Revisa tus reservas.`);
       this.router.navigate(['/manage-bookings']);
     } catch (error) {
+      this.isBooking.set(false); // Finaliza la reserva (error)
       console.error('Error reservando vuelo:', error);
-      alert('Error al reservar el vuelo. Por favor, intenta de nuevo.');
+      // 👈 ERROR: Alerta de error
+      alert('❌ Error al reservar el vuelo. Por favor, intenta de nuevo.');
+      // Opcionalmente, aquí puedes mostrar un modal/snackbar en lugar del alert nativo
     }
   }
 }

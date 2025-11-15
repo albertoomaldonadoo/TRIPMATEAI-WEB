@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router'; // Se elimina RouterLink de aquí
 import { FirebaseAuthService } from '../../core/services/firebase-auth.service';
 import { FirestoreService } from '../../core/services/firestore.service';
 
@@ -18,7 +18,8 @@ interface Trip {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  // Se elimina RouterLink de la matriz de imports
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -113,6 +114,7 @@ export class DashboardComponent implements OnInit {
 
   async createSampleTrip() {
     const userId = this.user()?.id;
+    // NOTA: Se mantiene alert() aquí, pero se recomienda reemplazarlo con un modal personalizado.
     if (!userId) {
       alert('Debes estar autenticado para crear viajes');
       return;
@@ -151,9 +153,11 @@ export class DashboardComponent implements OnInit {
       });
       
       await this.loadTrips();
+      // NOTA: Se mantiene alert() aquí, pero se recomienda reemplazarlo con un modal personalizado.
       alert(`¡Viaje a ${randomDest.name} creado exitosamente!`);
     } catch (error) {
       console.error('Error creando viaje:', error);
+      // NOTA: Se mantiene alert() aquí, pero se recomienda reemplazarlo con un modal personalizado.
       alert('Error al crear el viaje. Por favor, intenta de nuevo.');
     }
   }
@@ -169,6 +173,7 @@ export class DashboardComponent implements OnInit {
   }
 
   async deleteTrip(tripId: string) {
+    // NOTA: Se mantiene confirm() aquí, pero se recomienda reemplazarlo con un modal personalizado.
     if (!confirm('¿Estás seguro de que deseas eliminar este viaje?')) {
       return;
     }
@@ -176,9 +181,11 @@ export class DashboardComponent implements OnInit {
     try {
       await this.firestore.deleteDocument('trips', tripId);
       await this.loadTrips();
+      // NOTA: Se mantiene alert() aquí, pero se recomienda reemplazarlo con un modal personalizado.
       alert('Viaje eliminado exitosamente');
     } catch (error) {
       console.error('Error eliminando viaje:', error);
+      // NOTA: Se mantiene alert() aquí, pero se recomienda reemplazarlo con un modal personalizado.
       alert('Error al eliminar el viaje. Por favor, intenta de nuevo.');
     }
   }
@@ -193,12 +200,14 @@ export class DashboardComponent implements OnInit {
   }
 
   async logout() {
+    // NOTA: Se mantiene confirm() aquí, pero se recomienda reemplazarlo con un modal personalizado.
     if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
       try {
         await this.auth.logout();
         this.router.navigate(['/login']);
       } catch (error) {
         console.error('Error al cerrar sesión:', error);
+        // NOTA: Se mantiene alert() aquí, pero se recomienda reemplazarlo con un modal personalizado.
         alert('Error al cerrar sesión. Por favor, intenta de nuevo.');
       }
     }
