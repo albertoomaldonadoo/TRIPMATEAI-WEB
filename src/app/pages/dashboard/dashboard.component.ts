@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router'; // Se elimina RouterLink de aquí
+import { Router } from '@angular/router';
 import { FirebaseAuthService } from '../../core/services/firebase-auth.service';
 import { FirestoreService } from '../../core/services/firestore.service';
 
@@ -18,7 +18,6 @@ interface Trip {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  // Se elimina RouterLink de la matriz de imports
   imports: [CommonModule, FormsModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -101,9 +100,14 @@ export class DashboardComponent implements OnInit {
       
       this.trips = trips.map(trip => ({
         ...trip,
+        // Asegura que las fechas sean objetos Date
         startDate: trip.startDate?.toDate ? trip.startDate.toDate() : new Date(trip.startDate),
         endDate: trip.endDate?.toDate ? trip.endDate.toDate() : new Date(trip.endDate)
-      }));
+      })) as Trip[];
+      
+      // Ordenar para mostrar los 'planned' o 'ongoing' primero si es necesario
+      this.trips.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+
     } catch (error) {
       console.error('Error cargando viajes:', error);
       this.trips = [];
@@ -112,11 +116,17 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  /**
+   * Esta función crea un viaje de ejemplo.
+   * Se modificó para redirigir a /login si no hay un usuario autenticado.
+   */
   async createSampleTrip() {
     const userId = this.user()?.id;
-    // NOTA: Se mantiene alert() aquí, pero se recomienda reemplazarlo con un modal personalizado.
+    
+    // **VALIDACIÓN MEJORADA**: Si no hay userId, redirigir al login.
     if (!userId) {
-      alert('Debes estar autenticado para crear viajes');
+      alert('Debes estar autenticado para crear viajes. Redirigiendo a Iniciar Sesión.');
+      this.router.navigate(['/login']);
       return;
     }
 
@@ -135,8 +145,10 @@ export class DashboardComponent implements OnInit {
     
     const tripId = `trip_${Date.now()}`;
     const startDate = new Date();
+    // Iniciar en 7-96 días a partir de hoy
     startDate.setDate(startDate.getDate() + Math.floor(Math.random() * 90) + 7);
     const endDate = new Date(startDate);
+    // Duración de 3-16 días
     endDate.setDate(endDate.getDate() + Math.floor(Math.random() * 14) + 3);
 
     const statuses: ('planned' | 'ongoing' | 'completed')[] = ['planned', 'ongoing', 'completed'];
@@ -157,7 +169,7 @@ export class DashboardComponent implements OnInit {
       alert(`¡Viaje a ${randomDest.name} creado exitosamente!`);
     } catch (error) {
       console.error('Error creando viaje:', error);
-      // NOTA: Se mantiene alert() aquí, pero se recomienda reemplazarlo con un modal personalizado.
+      // NOTA: Se mantiene alert() aquí, que corresponde al segundo error posible en tu imagen.
       alert('Error al crear el viaje. Por favor, intenta de nuevo.');
     }
   }
@@ -195,7 +207,8 @@ export class DashboardComponent implements OnInit {
   }
 
   formatDate(date: Date): string {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    // Devuelve un formato como "Sep 20, 2025"
     return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
   }
 
