@@ -1,27 +1,84 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
+import { RegisterComponent } from './pages/register/register.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { authGuard } from './core/guards/auth.guard';
-import { RegisterComponent } from './pages/register/register.component';
+import { BookTicketsComponent } from './pages/book-tickets/book-tickets.component';
+import { ManageBookingsComponent } from './pages/manage-bookings/manage-bookings.component';
+import { CheckinComponent } from './pages/checkin/checkin.component';
+import { PassengerDetailsComponent } from './pages/passenger-details/passenger-details.component';
+import { UpdateContactsComponent } from './pages/update-contacts/update-contacts.component';
+import { FlightDetailsComponent } from './pages/flight-details/flight-details.component';
+import { ItinerariesComponent } from './pages/itineraries/itineraries.component';
+import { BookingsComponent } from './pages/bookings/bookings.component';
+import { SettingsComponent } from './pages/settings/settings.component';
 
 export const routes: Routes = [
     {
-        path:'',
-        redirectTo:'dashboard',
-        pathMatch:'full'
-
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
     },
     {
-        path:'login',
-        component:LoginComponent
+        path: 'login',
+        component: LoginComponent
     },
     {
-        path:'register',
-        component:RegisterComponent
+        path: 'register',
+        component: RegisterComponent
     },
     {
-        path:'dashboard',
-        component:DashboardComponent,
-        canActivate:[authGuard]
+        path: 'dashboard',
+        component: DashboardComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'book-tickets',
+        component: BookTicketsComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'manage-bookings',
+        component: ManageBookingsComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'checkin',
+        component: CheckinComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'passenger-details',
+        component: PassengerDetailsComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'update-contacts',
+        component: UpdateContactsComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'flight-details',
+        component: FlightDetailsComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'itineraries',
+        component: ItinerariesComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'bookings',
+        component: BookingsComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'settings',
+        component: SettingsComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: '**',
+        redirectTo: 'dashboard'
     }
 ];

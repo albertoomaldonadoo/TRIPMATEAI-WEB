@@ -1,0 +1,114 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-50 to-purple-100">
+  <!-- Header -->
+  <div class="bg-white border-b border-gray-200 px-8 py-4">
+    <div class="flex justify-between items-center">
+      <div class="flex items-center space-x-4">
+        <button (click)="goBack()" class="text-indigo-600 hover:text-indigo-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+        </button>
+        <h1 class="text-3xl font-bold text-gray-800">Ajustes</h1>
+      </div>
+      
+      <img
+        class="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-500"
+        [src]="'https://ui-avatars.com/api/?name=' + (user()?.name || 'Usuario') + '&background=6366f1&color=fff'"
+        [alt]="user()?.name || 'Usuario'"
+      />
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="max-w-4xl mx-auto p-8 space-y-6">
+    <!-- Configuración de Cuenta -->
+    <div class="bg-white rounded-2xl shadow-xl p-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Cuenta</h2>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+          <input
+            [(ngModel)]="settings.name"
+            type="text"
+            placeholder="Tu nombre"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+          <input
+            [(ngModel)]="settings.email"
+            type="email"
+            placeholder="correo@ejemplo.com"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Preferencias -->
+    <div class="bg-white rounded-2xl shadow-xl p-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Preferencias</h2>
+      
+      <div class="space-y-4">
+        <!-- Notificaciones por Email -->
+        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+          <div>
+            <p class="font-semibold text-gray-800">Notificaciones por Email</p>
+            <p class="text-sm text-gray-500">Recibe actualizaciones de tus reservas por correo</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input
+              [(ngModel)]="settings.emailNotifications"
+              type="checkbox"
+              class="sr-only peer"
+            />
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+          </label>
+        </div>
+
+        <!-- Notificaciones Push -->
+        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+          <div>
+            <p class="font-semibold text-gray-800">Notificaciones Push</p>
+            <p class="text-sm text-gray-500">Recibe notificaciones en tiempo real</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input
+              [(ngModel)]="settings.pushNotifications"
+              type="checkbox"
+              class="sr-only peer"
+            />
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+          </label>
+        </div>
+
+        <!-- Modo Oscuro -->
+        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+          <div>
+            <p class="font-semibold text-gray-800">Modo Oscuro</p>
+            <p class="text-sm text-gray-500">Activa el tema oscuro de la aplicación</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input
+              [(ngModel)]="settings.darkMode"
+              type="checkbox"
+              class="sr-only peer"
+            />
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón Guardar -->
+    <button
+      (click)="saveSettings()"
+      class="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors"
+    >
+      Guardar Cambios
+    </button>
+  </div>
+</div>

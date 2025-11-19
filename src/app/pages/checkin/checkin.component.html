@@ -1,0 +1,249 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-50 to-purple-100">
+  <!-- Header -->
+  <div class="bg-white border-b border-gray-200 px-8 py-4">
+    <div class="flex justify-between items-center">
+      <div class="flex items-center space-x-4">
+        <button (click)="goBack()" class="text-indigo-600 hover:text-indigo-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+        </button>
+        <h1 class="text-3xl font-bold text-gray-800">Check-in Online</h1>
+      </div>
+      
+      <img
+        class="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-500"
+        [src]="'https://ui-avatars.com/api/?name=' + (user()?.name || 'Usuario') + '&background=6366f1&color=fff'"
+        [alt]="user()?.name || 'Usuario'"
+      />
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="max-w-4xl mx-auto p-8">
+    <!-- Paso 1: Buscar Reserva -->
+    <div *ngIf="!bookingFound()" class="bg-white rounded-2xl shadow-xl p-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Buscar Reserva</h2>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Código de Reserva o Número de Vuelo
+          </label>
+          <input
+            [(ngModel)]="searchCode"
+            type="text"
+            placeholder="Ej: ABC123 o VY8912"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Apellido del Pasajero
+          </label>
+          <input
+            [(ngModel)]="lastName"
+            type="text"
+            placeholder="Apellido"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        
+        <button
+          (click)="searchBooking()"
+          class="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors"
+        >
+          Buscar Reserva
+        </button>
+      </div>
+    </div>
+
+    <!-- Paso 2: Selección de Asiento -->
+    <div *ngIf="bookingFound() && !checkinComplete()" class="bg-white rounded-2xl shadow-xl p-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Selecciona tu Asiento</h2>
+      
+      <!-- Información del Vuelo -->
+      <div class="bg-indigo-50 rounded-xl p-6 mb-8">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-sm text-gray-600">Vuelo</p>
+            <p class="text-lg font-bold text-gray-800">IB3456</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">Ruta</p>
+            <p class="text-lg font-bold text-gray-800">MAD → BCN</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">Fecha</p>
+            <p class="text-lg font-bold text-gray-800">15 Dic 2024</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">Hora</p>
+            <p class="text-lg font-bold text-gray-800">10:30</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mapa de Asientos -->
+      <div class="mb-8">
+        <div class="flex justify-center mb-4">
+          <div class="bg-gray-100 rounded-lg p-4 w-full max-w-2xl">
+            <p class="text-center font-semibold text-gray-700 mb-4">Cabina Principal</p>
+            
+            <!-- Filas de Asientos -->
+            <div class="space-y-2">
+              <div *ngFor="let row of seatRows" class="flex justify-center items-center space-x-4">
+                <span class="text-sm font-semibold text-gray-600 w-8">{{row}}</span>
+                
+                <!-- Asientos A, B, C -->
+                <div class="flex space-x-1">
+                  <button
+                    *ngFor="let col of ['A', 'B', 'C']"
+                    (click)="selectSeat(row + col)"
+                    [disabled]="isOccupied(row + col)"
+                    [ngClass]="{
+                      'bg-indigo-600 text-white': selectedSeat() === row + col,
+                      'bg-gray-400 text-gray-200 cursor-not-allowed': isOccupied(row + col),
+                      'bg-white text-gray-700 hover:bg-indigo-100': !isOccupied(row + col) && selectedSeat() !== row + col
+                    }"
+                    class="w-10 h-10 rounded-lg font-semibold text-sm border-2 border-gray-300 transition-all"
+                  >
+                    {{col}}
+                  </button>
+                </div>
+                
+                <!-- Pasillo -->
+                <div class="w-8"></div>
+                
+                <!-- Asientos D, E, F -->
+                <div class="flex space-x-1">
+                  <button
+                    *ngFor="let col of ['D', 'E', 'F']"
+                    (click)="selectSeat(row + col)"
+                    [disabled]="isOccupied(row + col)"
+                    [ngClass]="{
+                      'bg-indigo-600 text-white': selectedSeat() === row + col,
+                      'bg-gray-400 text-gray-200 cursor-not-allowed': isOccupied(row + col),
+                      'bg-white text-gray-700 hover:bg-indigo-100': !isOccupied(row + col) && selectedSeat() !== row + col
+                    }"
+                    class="w-10 h-10 rounded-lg font-semibold text-sm border-2 border-gray-300 transition-all"
+                  >
+                    {{col}}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leyenda -->
+        <div class="flex justify-center space-x-6 text-sm">
+          <div class="flex items-center space-x-2">
+            <div class="w-6 h-6 bg-white border-2 border-gray-300 rounded"></div>
+            <span>Disponible</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-6 h-6 bg-indigo-600 rounded"></div>
+            <span>Seleccionado</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-6 h-6 bg-gray-400 rounded"></div>
+            <span>Ocupado</span>
+          </div>
+        </div>
+      </div>
+
+      <button
+        (click)="confirmCheckin()"
+        [disabled]="!selectedSeat()"
+        class="w-full px-6 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+      >
+        Confirmar Check-in
+      </button>
+    </div>
+
+    <!-- Paso 3: Tarjeta de Embarque -->
+    <div *ngIf="checkinComplete()" class="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h2 class="text-3xl font-bold mb-2">Tarjeta de Embarque</h2>
+            <p class="text-indigo-100">Check-in completado exitosamente</p>
+          </div>
+          <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+
+        <div class="grid grid-cols-3 gap-6">
+          <div>
+            <p class="text-indigo-200 text-sm mb-1">Pasajero</p>
+            <p class="text-xl font-bold">{{user()?.name}} {{user()?.surname}}</p>
+          </div>
+          <div>
+            <p class="text-indigo-200 text-sm mb-1">Asiento</p>
+            <p class="text-xl font-bold">{{selectedSeat()}}</p>
+          </div>
+          <div>
+            <p class="text-indigo-200 text-sm mb-1">Puerta</p>
+            <p class="text-xl font-bold">A12</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-8">
+        <div class="grid grid-cols-2 gap-6 mb-8">
+          <div>
+            <p class="text-sm text-gray-600 mb-1">Vuelo</p>
+            <p class="text-lg font-bold text-gray-800">IB3456</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600 mb-1">Fecha</p>
+            <p class="text-lg font-bold text-gray-800">15 Dic 2024</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600 mb-1">Origen</p>
+            <p class="text-lg font-bold text-gray-800">Madrid (MAD)</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600 mb-1">Destino</p>
+            <p class="text-lg font-bold text-gray-800">Barcelona (BCN)</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600 mb-1">Embarque</p>
+            <p class="text-lg font-bold text-gray-800">10:00</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600 mb-1">Salida</p>
+            <p class="text-lg font-bold text-gray-800">10:30</p>
+          </div>
+        </div>
+
+        <!-- Código de Barras Simulado -->
+        <div class="bg-gray-100 h-24 rounded-lg flex items-center justify-center mb-6">
+          <div class="space-x-1 flex">
+            <div *ngFor="let bar of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]" 
+                 [style.width.px]="bar % 2 === 0 ? 8 : 4"
+                 class="h-16 bg-gray-800"></div>
+          </div>
+        </div>
+
+        <div class="flex space-x-4">
+          <button
+            (click)="downloadBoardingPass()"
+            class="flex-1 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors"
+          >
+            Descargar PDF
+          </button>
+          <button
+            (click)="sendToEmail()"
+            class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-colors"
+          >
+            Enviar por Email
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

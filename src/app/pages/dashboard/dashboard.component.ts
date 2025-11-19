@@ -1,9 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { FirebaseAuthService } from '../../core/services/firebase-auth.service';
 import { FirestoreService } from '../../core/services/firestore.service';
-import { Router, RouterLink } from '@angular/router';
 
 interface Trip {
   id: string;
@@ -15,16 +15,10 @@ interface Trip {
   origin?: string;
 }
 
-interface SearchForm {
-  from: string;
-  to: string;
-  date: string;
-}
-
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule], // Eliminado RouterLink ya que no se usa
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -37,16 +31,6 @@ export class DashboardComponent implements OnInit {
   trips: Trip[] = [];
   isLoading = false;
   
-  // CORREGIDO: Añadidas todas las opciones del sidebar
-  activeTab = signal<'book' | 'manage' | 'checkin' | 'passenger' | 'contacts' | 'flight'>('book');
-  
-  // Formulario de búsqueda
-  searchForm: SearchForm = {
-    from: 'Delhi (DEL)',
-    to: 'Abu Dhabi (AUH)',
-    date: this.getDefaultDate()
-  };
-
   // Imágenes de destinos
   private destinationImages: { [key: string]: string } = {
     'Abu Dhabi': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&auto=format&fit=crop',
@@ -64,19 +48,13 @@ export class DashboardComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      // Crear perfil de usuario primero
       await this.ensureUserProfile();
-      // Luego cargar viajes
       await this.loadTrips();
     } catch (error) {
       console.error('Error en inicialización:', error);
-      // No mostrar alert para evitar error en la carga inicial
     }
   }
 
-  /**
-   * Asegura que el perfil del usuario existe en Firestore
-   */
   private async ensureUserProfile() {
     const userId = this.user()?.id;
     if (!userId) return;
@@ -95,43 +73,19 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  /**
-   * Cambia la pestaña activa
-   */
-  setActiveTab(tab: 'book' | 'manage' | 'checkin' | 'passenger' | 'contacts' | 'flight') {
-    this.activeTab.set(tab);
-    console.log('Tab activa:', tab);
+  // Navegación del sidebar
+  navigateTo(route: string) {
+    this.router.navigate([route]);
   }
 
-  /**
-   * Busca vuelos
-   */
-  searchFlights() {
-    if (!this.searchForm.from || !this.searchForm.to || !this.searchForm.date) {
-      alert('Por favor, completa todos los campos de búsqueda');
-      return;
-    }
-
-    console.log('Buscando vuelos:', this.searchForm);
-    alert(`Buscando vuelos de ${this.searchForm.from} a ${this.searchForm.to} para ${this.searchForm.date}`);
+  // Navegación del header
+  navigateToHeader(route: string) {
+    this.router.navigate([route]);
   }
 
-  /**
-   * Intercambia origen y destino
-   */
-  swapLocations() {
-    const temp = this.searchForm.from;
-    this.searchForm.from = this.searchForm.to;
-    this.searchForm.to = temp;
-  }
-
-  /**
-   * Carga los viajes del usuario desde Firestore
-   */
   async loadTrips() {
     const userId = this.user()?.id;
     if (!userId) {
-      console.log('No hay usuario autenticado');
       this.trips = [];
       return;
     }
@@ -146,14 +100,16 @@ export class DashboardComponent implements OnInit {
       
       this.trips = trips.map(trip => ({
         ...trip,
+        // Asegura que las fechas sean objetos Date
         startDate: trip.startDate?.toDate ? trip.startDate.toDate() : new Date(trip.startDate),
         endDate: trip.endDate?.toDate ? trip.endDate.toDate() : new Date(trip.endDate)
-      }));
+      })) as Trip[];
+      
+      // Ordenar para mostrar los 'planned' o 'ongoing' primero si es necesario
+      this.trips.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
 
-      console.log('Viajes cargados exitosamente:', this.trips.length);
     } catch (error) {
       console.error('Error cargando viajes:', error);
-      // Inicializar como array vacío si hay error
       this.trips = [];
     } finally {
       this.isLoading = false;
@@ -161,12 +117,16 @@ export class DashboardComponent implements OnInit {
   }
 
   /**
-   * Crea un viaje de ejemplo
+   * Esta función crea un viaje de ejemplo.
+   * Se modificó para redirigir a /login si no hay un usuario autenticado.
    */
   async createSampleTrip() {
     const userId = this.user()?.id;
+    
+    // **VALIDACIÓN MEJORADA**: Si no hay userId, redirigir al login.
     if (!userId) {
-      alert('Debes estar autenticado para crear viajes');
+      alert('Debes estar autenticado para crear viajes. Redirigiendo a Iniciar Sesión.');
+      this.router.navigate(['/login']);
       return;
     }
 
@@ -185,8 +145,10 @@ export class DashboardComponent implements OnInit {
     
     const tripId = `trip_${Date.now()}`;
     const startDate = new Date();
+    // Iniciar en 7-96 días a partir de hoy
     startDate.setDate(startDate.getDate() + Math.floor(Math.random() * 90) + 7);
     const endDate = new Date(startDate);
+    // Duración de 3-16 días
     endDate.setDate(endDate.getDate() + Math.floor(Math.random() * 14) + 3);
 
     const statuses: ('planned' | 'ongoing' | 'completed')[] = ['planned', 'ongoing', 'completed'];
@@ -203,25 +165,27 @@ export class DashboardComponent implements OnInit {
       });
       
       await this.loadTrips();
+      // NOTA: Se mantiene alert() aquí, pero se recomienda reemplazarlo con un modal personalizado.
       alert(`¡Viaje a ${randomDest.name} creado exitosamente!`);
     } catch (error) {
       console.error('Error creando viaje:', error);
+      // NOTA: Se mantiene alert() aquí, que corresponde al segundo error posible en tu imagen.
       alert('Error al crear el viaje. Por favor, intenta de nuevo.');
     }
   }
 
-  /**
-   * Visualiza los detalles de un viaje
-   */
   viewTrip(trip: Trip) {
-    console.log('Ver detalles del viaje:', trip);
-    alert(`Detalles del viaje a ${trip.destination}\nFecha: ${this.formatDate(trip.startDate)}\nEstado: ${trip.status}`);
+    this.router.navigate(['/flight-details'], { 
+      queryParams: { 
+        tripId: trip.id,
+        destination: trip.destination,
+        origin: trip.origin
+      } 
+    });
   }
 
-  /**
-   * Elimina un viaje
-   */
   async deleteTrip(tripId: string) {
+    // NOTA: Se mantiene confirm() aquí, pero se recomienda reemplazarlo con un modal personalizado.
     if (!confirm('¿Estás seguro de que deseas eliminar este viaje?')) {
       return;
     }
@@ -229,45 +193,34 @@ export class DashboardComponent implements OnInit {
     try {
       await this.firestore.deleteDocument('trips', tripId);
       await this.loadTrips();
+      // NOTA: Se mantiene alert() aquí, pero se recomienda reemplazarlo con un modal personalizado.
       alert('Viaje eliminado exitosamente');
     } catch (error) {
       console.error('Error eliminando viaje:', error);
+      // NOTA: Se mantiene alert() aquí, pero se recomienda reemplazarlo con un modal personalizado.
       alert('Error al eliminar el viaje. Por favor, intenta de nuevo.');
     }
   }
 
-  /**
-   * Obtiene la imagen del destino
-   */
   getDestinationImage(destination: string): string {
     return this.destinationImages[destination] || this.destinationImages['default'];
   }
 
-  /**
-   * Formatea una fecha
-   */
   formatDate(date: Date): string {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    // Devuelve un formato como "Sep 20, 2025"
     return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
   }
 
-  /**
-   * Obtiene la fecha por defecto
-   */
-  private getDefaultDate(): string {
-    return '2020-02-23';
-  }
-
-  /**
-   * Cierra sesión
-   */
   async logout() {
+    // NOTA: Se mantiene confirm() aquí, pero se recomienda reemplazarlo con un modal personalizado.
     if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
       try {
         await this.auth.logout();
         this.router.navigate(['/login']);
       } catch (error) {
         console.error('Error al cerrar sesión:', error);
+        // NOTA: Se mantiene alert() aquí, pero se recomienda reemplazarlo con un modal personalizado.
         alert('Error al cerrar sesión. Por favor, intenta de nuevo.');
       }
     }
