@@ -4,13 +4,11 @@ import { RegisterComponent } from './pages/register/register.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { authGuard } from './core/guards/auth.guard';
 import { BookTicketsComponent } from './pages/book-tickets/book-tickets.component';
-import { ManageBookingsComponent } from './pages/manage-bookings/manage-bookings.component';
 import { CheckinComponent } from './pages/checkin/checkin.component';
 import { PassengerDetailsComponent } from './pages/passenger-details/passenger-details.component';
 import { UpdateContactsComponent } from './pages/update-contacts/update-contacts.component';
 import { FlightDetailsComponent } from './pages/flight-details/flight-details.component';
 import { ItinerariesComponent } from './pages/itineraries/itineraries.component';
-import { BookingsComponent } from './pages/bookings/bookings.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 
 export const routes: Routes = [
@@ -38,11 +36,6 @@ export const routes: Routes = [
         canActivate: [authGuard]
     },
     {
-        path: 'manage-bookings',
-        component: ManageBookingsComponent,
-        canActivate: [authGuard]
-    },
-    {
         path: 'checkin',
         component: CheckinComponent,
         canActivate: [authGuard]
@@ -65,11 +58,6 @@ export const routes: Routes = [
     {
         path: 'itineraries',
         component: ItinerariesComponent,
-        canActivate: [authGuard]
-    },
-    {
-        path: 'bookings',
-        component: BookingsComponent,
         canActivate: [authGuard]
     },
     {
